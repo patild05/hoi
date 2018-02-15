@@ -9,7 +9,7 @@
             "value": "CoreInfra"
         },
         "vmName": {
-            "value": "LabDC1"
+            "value": "Laboratory"
         },
         "adminUsername": {
             "value": "VMAdmin"
@@ -18,12 +18,7 @@
             "value": "CoreInfraVNet"
         },        
         "adminPassword": {
-            "reference": {
-                "keyVault": {
-                  "id": "/subscriptions/b6c72194-a2d4-49a2-9317-9f42d823cec6/resourceGroups/CoreInfra/providers/Microsoft.KeyVault/vaults/CoreInfraKeyVaultCC"
-                },
-                "secretName": "VMAdmin"
-              }
+            "value": "Password@123"
         }             
     }
 }
