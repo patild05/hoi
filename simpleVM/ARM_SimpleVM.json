@@ -1,0 +1,183 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId":{
+            "type": "string",
+            "metadata": {
+                "description": "Subscription Id to be used in the template"
+            }
+        },
+        "resourceGroupname":{
+            "type": "string",
+            "metadata": {
+                "description":"Resource Group name to be used in the template"
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "metadata": {
+                "description": "Type of the Storage Account"
+            }
+        },
+        "vmName": {
+            "type": "string",
+            "maxLength": 15,
+            "metadata": {
+                "description": "Name of the VM(max 15 chars)"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Basic_A2",
+            "metadata": {
+                "description": "Size of the VM"
+            }
+        },
+        "imagePublisher": {
+            "type": "string",
+            "defaultValue": "MicrosoftWindowsServer",
+            "metadata": {
+                "description": "Image Publisher"
+            }
+        },
+        "imageOffer": {
+            "type": "string",
+            "defaultValue": "WindowsServer",
+            "metadata": {
+                "description": "Image Offer"
+            }
+        },
+        "imageSKU": {
+            "type": "string",
+            "defaultValue": "2016-Datacenter",
+            "allowedValues": [
+                "2016-Datacenter",
+                "2012-R2-Datacenter"
+            ],
+            "metadata": {
+                "description": "Image SKU"
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password"
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultValue": "CoreInfraVNet",
+            "allowedValues": [
+                "CoreInfraVNet",
+                "NW-TSEEnterprise-vnet-def",
+                "NW-TSEPCNL-vnet-def",
+                "NW-TSEPCUK-vnet-def",
+                "NW-Sandbox-vnet-def"
+            ],
+            "metadata": {
+                "description": "VNET Name"
+            }
+        },
+        "DDISK1Size": {
+            "type": "string",
+            "defaultValue": "1023",
+            "metadata": {
+                "description": "Datadisk 1 size (Gb)"
+            }
+        }
+    },
+    "variables": {
+        "vmNameConvention": "[concat('vm',parameters('vmName'))]",
+        "vnetID": "[concat('vnetID',parameters('VirtualNetworkName'))]",
+        "vnetIDNW-TSEEnterprise-vnet-def": {
+            "subnetID": "[concat('/subscriptions/',parameters('subscriptionId'),'/resourceGroups/',parameters('resourceGroupname'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'),'/subnets/default')]"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-10-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('vmNameConvention'),'_NetworkInterface')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('vnetIDNW-TSEEnterprise-vnet-def').subnetID]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmNameConvention')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('imagePublisher')]",
+                        "offer": "[parameters('imageOffer')]",
+                        "sku": "[parameters('imageSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(variables('vmNameConvention'),'_OsDisk')]",
+                        "createOption": "FromImage",
+                        "caching": "None"
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,                            
+                            "createOption": "Attach",
+                            "caching": "None",
+                            "managedDisk": {
+                                "storageAccountType": "[parameters('storageAccountType')]",
+                                "id": "[concat('/subscriptions/',parameters('subscriptionId'),'/resourceGroups/',parameters('resourceGroupname'),'/providers/Microsoft.Compute/disks/','Disk1')]"
+                            },
+                            "diskSizeGB": "[parameters('DDISK1Size')]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmNameConvention')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmNameConvention'),'_NetworkInterface'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmNameConvention'),'_NetworkInterface'))]"
+            ]
+        }
+    ]
+}
