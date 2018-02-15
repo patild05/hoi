@@ -70,8 +70,8 @@ Write-Host "INFO --- Starting script at $(Get-Date -Format "dd-MM-yyyy HH:mm")"
 # sign in
 Write-Host "Logging in...";
 
-$cred = Get-Credential -UserName 6f08a82b-50f0-472d-888f-70cc1cc925be -Message "Enter the credentials"
-Login-AzureRmAccount -Credential $cred -ServicePrincipal -TenantId 033a7408-6de4-42db-920e-57ae321da0e5
+#$cred = Get-Credential -UserName 6f08a82b-50f0-472d-888f-70cc1cc925be -Message "Enter the credentials"
+#Login-AzureRmAccount -Credential $cred -ServicePrincipal -TenantId 033a7408-6de4-42db-920e-57ae321da0e5
 
 
 #Select-AzureRmProfile -Path "c:\folder\azureprofile.json"
@@ -79,6 +79,7 @@ Login-AzureRmAccount -Credential $cred -ServicePrincipal -TenantId 033a7408-6de4
 # select subscription
 Write-Host "Selecting subscription '$subscriptionId'";
 Select-AzureRmSubscription -SubscriptionID $subscriptionId;
+Write-Host "Here...";
 
 # Register RPs
 $resourceProviders = @("microsoft.compute","microsoft.devtestlab","microsoft.storage","microsoft.network");
