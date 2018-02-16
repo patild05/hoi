@@ -15,7 +15,7 @@
     [Parameter(Mandatory=$false)]
     [String]$WRSIdTag = "231",
     [Parameter(Mandatory=$false)]
-    [String]$ApplicationNameTag = "Dol",
+    [String]$ApplicationNameTag = "helloworld",
     [Parameter(Mandatory=$false)]
     [ValidateSet("DEV","TST","QA","PROD","SBX")][String]$EnvironmentTag = "Dev",
     [Parameter(Mandatory=$false)]
