@@ -145,16 +145,7 @@
                         "caching": "None"
                     },
                     "dataDisks": [
-                        {
-                            "lun": 0,                            
-                            "createOption": "Attach",
-                            "caching": "None",
-                            "managedDisk": {
-                                "storageAccountType": "[parameters('storageAccountType')]",
-                                "id": "[concat('/subscriptions/',parameters('subscriptionId'),'/resourceGroups/',parameters('resourceGroupname'),'/providers/Microsoft.Compute/disks/','Disk1')]"
-                            },
-                            "diskSizeGB": "[parameters('DDISK1Size')]"
-                        }
+                        
                     ]
                 },
                 "osProfile": {
