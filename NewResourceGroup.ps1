@@ -15,7 +15,7 @@
     [Parameter(Mandatory=$false)]
     [String]$WRSIdTag = "231",
     [Parameter(Mandatory=$false)]
-    [String]$ApplicationNameTag = "Dul",
+    [String]$ApplicationNameTag = "Dol",
     [Parameter(Mandatory=$false)]
     [ValidateSet("DEV","TST","QA","PROD","SBX")][String]$EnvironmentTag = "Dev",
     [Parameter(Mandatory=$false)]
@@ -197,8 +197,8 @@
         $servicePrincipal = New-AzureRmADServicePrincipal -ApplicationId $azureAdApplication.ApplicationId
         $servicePrincipal | Format-Table
 
-        Write-Output "INFO --- Sleeping for 10s to give the service principal a chance to finish creating."
-        Start-Sleep -s 10
+        Write-Output "INFO --- Sleeping for few seconds to give the service principal a chance to finish creating."
+        Start-Sleep -s 25
  
         # Assign the Service Principal the Contributor Role to the Subscription.
         # Roles can be Granted at the Resource Group Level if Desired.
