@@ -1,4 +1,4 @@
-﻿
+
 
     [CmdletBinding()]
     Param
@@ -15,7 +15,7 @@
     [Parameter(Mandatory=$false)]
     [String]$WRSIdTag = "231",
     [Parameter(Mandatory=$false)]
-    [String]$ApplicationNameTag = "helloworld",
+    [String]$ApplicationNameTag = "DnA",
     [Parameter(Mandatory=$false)]
     [ValidateSet("DEV","TST","QA","PROD","SBX")][String]$EnvironmentTag = "Dev",
     [Parameter(Mandatory=$false)]
@@ -30,19 +30,7 @@
     [ValidatePattern("[\D\d]+[@][t][a][t][a][s][t][e][e][l][.][c][o][m]")][String]$UsedByTag= "Dick.Vriend@tatasteel.com"
     )
 
-    Write-Host "INFO --- Logging in...";
-
-    try
-    {    
-        #$cred = Get-Credential -UserName 6f08a82b-50f0-472d-888f-70cc1cc925be -Message "Enter the credentials"
-        #Login-AzureRmAccount -Credential $cred -ServicePrincipal -TenantId 033a7408-6de4-42db-920e-57ae321da0e5
-
-    }
-    catch
-    {
-        Write-Error -Message $_.Exception
-        throw $_.Exception    
-    }
+    Write-Host "INFO --- Logging in...";   
 
     # Stop the runbook if something fails
     $ErrorActionPreference = "Stop"
@@ -128,17 +116,17 @@
         $automationAccountName = "AutomationAccountWE"
         $runbookName = "Send_Email"
         $params = @{'RGNAME'=$ResourceGroupName}
-        $scheduleName = "SendEmail14_$ResourceGroupName"
+        $scheduleName = "SendEmail_$ResourceGroupName"
 
-        New-AzureRmAutomationSchedule –AutomationAccountName $automationAccountName –Name $scheduleName –StartTime (Get-Date).AddMinutes(10) -ResourceGroupName CoreInfra -OneTime      
+        New-AzureRmAutomationSchedule –AutomationAccountName $automationAccountName –Name $scheduleName –StartTime (Get-Date).AddMinutes(6) -ResourceGroupName CoreInfra -OneTime      
         Register-AzureRmAutomationScheduledRunbook –AutomationAccountName $automationAccountName –Name $runbookName –ScheduleName $scheduleName –Parameters $params -ResourceGroupName CoreInfra
 
         Write-Output "INFO --- Creating a schedule to delete the resource group after 3 months"    
         $runbookName = "Delete_SandboxResourceGroup"
-        $params = @{'RGNAME'=$ResourceGroupName}
-        $scheduleName = "DeleteRG14_$ResourceGroupName"
+        $params = @{'APPLICATIONNAME'=$ApplicationNameTag;'RESOURCEGROUPNAME'=$ResourceGroupName }        
+        $scheduleName = "DeleteRG_$ResourceGroupName"
 
-        New-AzureRmAutomationSchedule –AutomationAccountName $automationAccountName –Name $scheduleName –StartTime (Get-Date).AddDays(1) -ResourceGroupName CoreInfra -OneTime      
+        New-AzureRmAutomationSchedule –AutomationAccountName $automationAccountName –Name $scheduleName –StartTime (Get-Date).AddMinutes(10) -ResourceGroupName CoreInfra -OneTime      
         Register-AzureRmAutomationScheduledRunbook –AutomationAccountName $automationAccountName –Name $runbookName –ScheduleName $scheduleName –Parameters $params -ResourceGroupName CoreInfra
     }
 
@@ -223,7 +211,3 @@
     Write-Output "*************** Details ***************"
     # Ending script
     Write-Output "INFO --- Ending New-ResourceGroup script at $(Get-Date -Format "dd-MM-yyyy HH:mm")"
-
-
-
-
