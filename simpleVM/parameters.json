@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "subscriptionId":{
-            "value": "b6c72194-a2d4-49a2-9317-9f42d823cec6"
+            "value": "bxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
         },
         "resourceGroupname":{
             "value": "CoreInfra"
