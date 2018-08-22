@@ -76,11 +76,7 @@
             "type": "string",
             "defaultValue": "CoreInfraVNet",
             "allowedValues": [
-                "CoreInfraVNet",
-                "NW-TSEEnterprise-vnet-def",
-                "NW-TSEPCNL-vnet-def",
-                "NW-TSEPCUK-vnet-def",
-                "NW-Sandbox-vnet-def"
+                "CoreInfraVNet"                
             ],
             "metadata": {
                 "description": "VNET Name"
@@ -114,7 +110,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[variables('vnetIDNW-TSEEnterprise-vnet-def').subnetID]"
+                                "id": "[variables('vnetIDNW-vnet-def').subnetID]"
                             }
                         }
                     }
